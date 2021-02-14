@@ -49,7 +49,7 @@ setcampar() {
     #  from 0=2 to 6=128
     #
     curl "http://${CAM}/control?var=agc&val=1"
-    curl "http://${CAM}/control?var=gainceilingl&val=2"
+    curl "http://${CAM}/control?var=gainceiling&val=2"
     
     #
     # whit- and blackpoint correction ON
