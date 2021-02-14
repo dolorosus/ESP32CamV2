@@ -34,7 +34,7 @@
 
 // 
 #define MYNAME "ESPCAM01"
-#define MYVERSION "FW:202102132330"
+#define MYVERSION "FW:202102142350"
 
 Preferences pref;
 BluetoothSerial SerialBT;
