@@ -4,6 +4,14 @@
 #
 #
 
+setup() {
+	export myname=$(basename ${0})
+	export camidx=${1:-"00"}
+	export CAM=ESPCAM${camidx}
+	export dest=${3:-"/mnt/USB64/capture"}
+	export interval=${2:-15}s
+}
+
 usage() {
 cat<<EOF
 
@@ -22,7 +30,7 @@ exit 0
 }
 
  
-setpar() {
+setcampar() {
 	curl "http://${CAM}/control?var=framesize&val=10"
 	curl "http://${CAM}/control?var=quality&val=10"
 	curl "http://${CAM}/control?var=awb&val=1"
@@ -62,13 +70,7 @@ setpar() {
 #
 [ ${1}"x" = "--usagex" ] && usage
 
-export myname=$(basename ${0})
-export camidx=${1:-"00"}
-export CAM=ESPCAM${camidx}
-export dest=${3:-"/mnt/USB64/capture"}
-export interval=${2:-15}s
-#
-
+setup
 
 #
 # capture frames.
@@ -77,7 +79,7 @@ export interval=${2:-15}s
 #
 while true
 do
-	setpar
+	setcampar
 	for (( i=1; i<=8; i++ ))
 	do  
 		folder=${dest}/$(date +%y%m%d)
