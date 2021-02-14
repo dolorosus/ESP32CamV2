@@ -41,7 +41,7 @@ setcampar() {
 	#
 	curl "http://${CAM}/control?var=aec&val=1"
 	curl "http://${CAM}/control?var=aec2&val=1"
-    curl "http://${CAM}/control?var=ae_level&val=0"
+  curl "http://${CAM}/control?var=ae_level&val=0"
 	
 	#
 	# Gain-Ceilling  Level 2  
