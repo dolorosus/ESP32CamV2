@@ -8,12 +8,9 @@ Simple camera webserver
 
 based on Espressifs demo file espressif/esp32-camera
 
-## Changes
-	
-	Trying to connect to WiFi with stored credentials, if this fails the credentials are requested via bluetooth.
-	Automatic reconnect if WiFi connection is lost.
-	
-		
+## Changes	
+Trying to connect to WiFi with stored credentials, if this fails the credentials are requested via bluetooth.
+Automatic reconnect if WiFi connection is lost.
 ## Usage
 
 Define your device name in CameraWebServer.cpp (MYNAME). This name will be used as DNS-Name, Bluetooth device name and NV-Flash pathname).
