@@ -119,7 +119,7 @@ void setup() {
 
   Serial.printf("Camera Ready! Use 'http://%s to connect.\n",  WiFi.localIP().toString().c_str());
   Serial.printf("\nRecording:\n\tffmpeg -re -f mjpeg -t 300 -i http://%s:81/stream   -an -c:v libx265 -crf 29 -preset fast <OUTPUTFILE>",MYNAME);
-  Serial.printf("\nCapture frame:\n\thttp://%s/capture  --output <OUTPUTFILE>\n\n",MYNAME);
+  Serial.printf("\nCapture frame:\n\tcurl http://%s/capture  --output <OUTPUTFILE>\n\n",MYNAME);
 }
 
 void loop() {
