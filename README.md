@@ -6,7 +6,7 @@ Simple camera webserver
 
 ## Author / Origin:
 
-based on Espressifs demo file 
+based on Espressifs demo file espressif/esp32-camera
 
 ## Changes
 	
