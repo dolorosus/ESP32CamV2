@@ -109,7 +109,11 @@ void setup() {
     Serial.println(pref.getString("pass","DEFAULT"));
     
   }
+
   Serial.printf("Connected to %s\n", WiFi.SSID().c_str());
+  //
+  // Bluetooth AND WiFi won't work well. 
+  //
   SerialBT.printf("Bluetooth no longer needed.\nClosing bluetooth connection. Good bye.\n");
   SerialBT.disconnect();
   SerialBT.end();

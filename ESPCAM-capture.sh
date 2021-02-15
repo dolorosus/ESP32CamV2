@@ -80,13 +80,13 @@ setup
 while true
 do
     setcampar
-    for (( i=1; i<=8; i++ ))
+    for (( i=1; i<=12; i++ ))
     do  
+        sleep ${interval}
         folder=${dest}/$(date +%y%m%d)
         [ -d ${folder} ] || mkdir -p ${folder}
         stamp=$(date +%y%m%d_%H%M%S)
         curl "http://${CAM}/capture" --output ${folder}/${CAM}-${stamp}.jpg
-        sleep ${interval}
     done 
 done
 
