@@ -52,7 +52,7 @@ setcampar() {
     curl "http://${CAM}/control?var=gainceiling&val=2"
     
     #
-    # whit- and blackpoint correction ON
+    # white- and blackpoint correction ON
     #
     curl "http://${CAM}/control?var=bpc&val=1"
     curl "http://${CAM}/control?var=wpc&val=1"
@@ -66,27 +66,43 @@ setcampar() {
 }
 
 #
-#
+#  Main
 #
 [ ${1}"x" = "--usagex" ] && usage
 
 setup
 
+#  No time restriction (capture always)
+#
+# export from=000000
+# export to=999999 
+
+# 
+# Capture only from 06:00 to 20:30
+#
+export from=060000
+export to=203000
 #
 # capture frames.
-# set camera parameter every 8 captures 
-# (just in case someone called the camera wesite and changed something...)
-#
+
 while true
 do
-    setcampar
+    #
+    # Reinitalize the parameter evrey 12 captures
+    #  (in case s.o. changed them via Webinterface)
+    #
+    setpar
     for (( i=1; i<=12; i++ ))
     do  
         sleep ${interval}
-        folder=${dest}/$(date +%y%m%d)
-        [ -d ${folder} ] || mkdir -p ${folder}
-        stamp=$(date +%y%m%d_%H%M%S)
-        curl "http://${CAM}/capture" --output ${folder}/${CAM}-${stamp}.jpg
+        
+        hms=$(date +%H%M%S)
+        ymd=$(date +%Y%m%d)
+        [ ${hms} -gt ${from} ] && [ ${hms} -lt ${to} ] && {
+            [ -d ${dest}/${ymd} ] || mkdir -p ${dest}/${ymd}
+            curl "http://${CAM}/capture" --output ${dest}/${ymd}/${CAM}-${ymd}_${hms}.jpg
+        }
     done 
 done
 
+# That's all folks
