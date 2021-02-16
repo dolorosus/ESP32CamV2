@@ -92,8 +92,8 @@ do
     #  (in case s.o. changed them via Webinterface)
     #
     setpar
-    echo -e "\n waiting 5s for camera adjustments (aec,agc,wb...)"
-    sleep 5s
+    echo -e "\n waiting 2s for camera adjustments (aec,agc,wb...)"
+    sleep 2s
 
     for (( i=1; i<=12; i++ ))
     do  
