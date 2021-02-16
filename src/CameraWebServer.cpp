@@ -66,13 +66,15 @@ void setup()
   {
     Serial.println("Bluetooth connection failed.");
   }
-  Serial.println("Bluetooth connect ok.");
+     Serial.println("Bluetooth connect ok.");
 
   pref.begin(MYNAME, false);
 
   // Serial.print("freeEntries()_:");
   // Serial.println( pref.freeEntries());;
 
+  //Try WiFi connect
+  // if not successful, ask for ssid and passwword via Bluetooth
   while (!wifiConnect(45000))
   {
 
@@ -85,6 +87,7 @@ void setup()
       return;
     }
 
+    // Ask for SSID until a valid index has been choosen
     while (client_wifi_ssid_id < 1 || client_wifi_ssid_id > n)
     {
       SerialBT.println();
@@ -96,15 +99,18 @@ void setup()
 
     ssid = ssids_array[client_wifi_ssid_id];
     SerialBT.printf("SSID_:%s\n", ssid.c_str());
-
+    
+    //ask for password
     SerialBT.println();
     SerialBT.println("Enter pass:");
     pass = BTinp();
     SerialBT.printf("PASS_:%s\n", pass.c_str());
 
+    // store SSID and passwd to NVRAM
     pref.putString("ssid", ssid.c_str());
     pref.putString("pass", pass.c_str());
 
+    // reread from NVRAM to be shure everything is in place  
     Serial.println("Stored values:");
     Serial.print("ssid_:");
     Serial.println(pref.getString("ssid", "DEFAULT"));
@@ -112,7 +118,9 @@ void setup()
     Serial.println(pref.getString("pass", "DEFAULT"));
   }
 
+  // at this point the network should be connected
   Serial.printf("Connected to %s\n", WiFi.SSID().c_str());
+
   if (!MDNS.begin(MYNAME))
     Serial.println("Error setting up MDNS responder!");
   //
@@ -136,9 +144,7 @@ void loop()
   delay(10000);
   wifistat = WiFi.status();
   if (wifistat != WL_CONNECTED)
-  {
     wifiConnect(60000);
-  }
 }
 
 bool wifiConnect(long timeout)
@@ -251,13 +257,13 @@ int wifiScanNetworks()
   SerialBT.println();
   if (n == 0)
   {
-    SerialBT.println("no networks found");
+    SerialBT.println("no WiFi networks found");
   }
   else
   {
     SerialBT.println();
     SerialBT.print(n);
-    SerialBT.println(" networks found");
+    SerialBT.println(" WiFi networks found");
     delay(1000);
     for (int i = 0; i < n; ++i)
     {
