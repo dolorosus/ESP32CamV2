@@ -92,16 +92,21 @@ do
     #  (in case s.o. changed them via Webinterface)
     #
     setpar
+    echo -e "\n waiting 5s for camera adjustments (aec,agc,wb...)"
+    sleep 5s
+
     for (( i=1; i<=12; i++ ))
     do  
-        sleep ${interval}
-        
-        hms=$(date +%H%M%S)
-        ymd=$(date +%Y%m%d)
+        datim=$(date +%H%M%S_+%Y%m%d)
+        hms={datim/%_*/}
+        ymd={datim/#_*/}
         [ ${hms} -gt ${from} ] && [ ${hms} -lt ${to} ] && {
             [ -d ${dest}/${ymd} ] || mkdir -p ${dest}/${ymd}
-            curl "http://${CAM}/capture" --output ${dest}/${ymd}/${CAM}-${ymd}_${hms}.jpg
+            curl "http://${CAM}/capture" --output ${dest}/${ymd}/${CAM}-${datim}.jpg
+            echo -e "\n${dest}/${ymd}/${CAM}-${datim}.jpg has been captured."
         }
+        echo -e "waiting ${interval} before next capture.\n"
+        sleep ${interval}
     done 
 done
 
