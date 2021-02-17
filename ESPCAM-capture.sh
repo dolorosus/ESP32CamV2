@@ -5,17 +5,19 @@
 #
 
 setup() {
+    
     export myname=$(basename ${0})
     export camidx=${1:-"00"}
-    export CAM=ESPCAM${camidx}
-    export dest=${3:-"/mnt/USB64/capture"}
     export interval=${2:-15}s
+    export dest=${3:-"/mnt/USB64/capture"}
+
+    export CAM=ESPCAM${camidx}
 }
 
 usage() {
 cat<<EOF
 
-    usage: ${0} [camidx] [interval] [destdir] 
+    usage: ${0} [camidx] [interval]  [destdir] 
     
     Defaults:
         camidx   = "00"
@@ -24,7 +26,7 @@ cat<<EOF
           
     ${myname}     will record from ESPCAM00 (Default for camidx is 00)
     ${myname} 01  will record from ESPCAM01
-    ${myname} 02 10 /tmp  will record from ESPCAM02 one picture every 10 seconds to /tmp
+    ${myname} 02 10 on /tmp  will record from ESPCAM02 one picture every 10 seconds to /tmp 
 EOF
 exit 0
 }
@@ -74,8 +76,7 @@ setup
 
 #  No time restriction (capture always)
 #
-# export from=000000
-# export to=999999 
+# export always=on
 
 # 
 # Capture only from 06:00 to 20:30
@@ -92,21 +93,20 @@ do
     #  (in case s.o. changed them via Webinterface)
     #
     setpar
-    echo -e "\n waiting 2s for camera adjustments (aec,agc,wb...)"
-    sleep 2s
-
     for (( i=1; i<=12; i++ ))
     do  
+        echo -e "${myname}: waiting ${interval} before next capture.\n"
+        sleep ${interval}
+    
         datim=$(date +%H%M%S_+%Y%m%d)
         hms={datim/%_*/}
         ymd={datim/#_*/}
-        [ ${hms} -gt ${from} ] && [ ${hms} -lt ${to} ] && {
+
+        [[ $always != "" || (${hms} -gt ${from}  &&  ${hms} -lt ${to}) ]] && {
             [ -d ${dest}/${ymd} ] || mkdir -p ${dest}/${ymd}
             curl "http://${CAM}/capture" --output ${dest}/${ymd}/${CAM}-${datim}.jpg
-            echo -e "\n${dest}/${ymd}/${CAM}-${datim}.jpg has been captured."
+            echo -e "\n${myname}: ${dest}/${ymd}/${CAM}-${datim}.jpg has been captured."
         }
-        echo -e "waiting ${interval} before next capture.\n"
-        sleep ${interval}
     done 
 done
 
