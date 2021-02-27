@@ -10,8 +10,9 @@ setup() {
     export camidx=${1:-"00"}
     export interval=${2:-15}s
     export dest=${3:-"/mnt/USB64/capture"}
-
     export CAM=ESPCAM${camidx}
+
+    [ -f ${dest}/.personal_settings ] && . ${dest}/.personal_settings 
 }
 
 usage() {
@@ -92,7 +93,7 @@ do
     # Reinitalize the parameter evrey 12 captures
     #  (in case s.o. changed them via Webinterface)
     #
-    setpar
+    setcampar
     for (( i=1; i<=12; i++ ))
     do  
         echo -e "${myname}: waiting ${interval} before next capture.\n"

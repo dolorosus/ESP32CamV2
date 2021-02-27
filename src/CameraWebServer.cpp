@@ -31,8 +31,8 @@
 #include "camera_pins.h"
 
 //
-#define MYNAME "ESPCAM02"
-#define MYVERSION "FW:202102151345"
+#define MYNAME "ESPCAM04"
+#define MYVERSION "FW:202102271500"
 
 Preferences pref;
 BluetoothSerial SerialBT;
@@ -66,7 +66,7 @@ void setup()
   {
     Serial.println("Bluetooth connection failed.");
   }
-     Serial.println("Bluetooth connect ok.");
+  Serial.println("Bluetooth connect ok.");
 
   pref.begin(MYNAME, false);
 
@@ -99,7 +99,7 @@ void setup()
 
     ssid = ssids_array[client_wifi_ssid_id];
     SerialBT.printf("SSID_:%s\n", ssid.c_str());
-    
+
     //ask for password
     SerialBT.println();
     SerialBT.println("Enter pass:");
@@ -110,7 +110,7 @@ void setup()
     pref.putString("ssid", ssid.c_str());
     pref.putString("pass", pass.c_str());
 
-    // reread from NVRAM to be shure everything is in place  
+    // reread from NVRAM to be shure everything is in place
     Serial.println("Stored values:");
     Serial.print("ssid_:");
     Serial.println(pref.getString("ssid", "DEFAULT"));
@@ -141,10 +141,24 @@ void setup()
 void loop()
 {
   // put your main code here, to run repeatedly:
-  delay(10000);
-  wifistat = WiFi.status();
-  if (wifistat != WL_CONNECTED)
+
+
+  int i = 0;
+  
+  if (WiFi.status() != WL_CONNECTED)
+  {
     wifiConnect(60000);
+    i++;
+    if (i > 5)
+        ESP.restart();
+  }
+  else
+  {
+    i=0;
+  }
+
+  delay(10000);
+
 }
 
 bool wifiConnect(long timeout)

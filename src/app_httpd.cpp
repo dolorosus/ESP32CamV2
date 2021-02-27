@@ -23,6 +23,7 @@
 #include "fr_forward.h"
 
 //#define SHOW_FRAME_INFO
+//#define PRINT_INFO_TO_JPG
 
 #define ENROLL_CONFIRM_TIMES 5
 #define FACE_ID_SAVE_NUMBER 7
@@ -349,15 +350,16 @@ static esp_err_t stream_handler(httpd_req_t *req){
                     // #
                     // #
                     // #
-                    // #
+ #if defined PRINT_INFO_TO_JPG
                     // dl_matrix3du_t *image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
                     // fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item);
                     // // HERE print some text
                     // rgb_print(image_matrix, 0x000000FF, "Hello!");
                     // bool jpeg_converted = fmt2jpg(image_matrix->item, fb->width*fb->height*3, fb->width, fb->height, PIXFORMAT_RGB888, 90, &_jpg_buf, &_jpg_buf_len);
                     // dl_matrix3du_free(image_matrix);
-
+#else
                     bool jpeg_converted = frame2jpg(fb, 80, &_jpg_buf, &_jpg_buf_len);
+#endif
                     esp_camera_fb_return(fb);
                     fb = NULL;
                     if(!jpeg_converted){
