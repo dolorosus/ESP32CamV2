@@ -541,6 +541,9 @@ static esp_err_t cmd_handler(httpd_req_t *req){
             detection_enabled = val;
         }
     }
+    else if(!strcmp(variable, "RESTART")) {
+        ESP.restart();
+    }
     else {
         res = -1;
     }
