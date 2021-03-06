@@ -22,10 +22,10 @@
 // C:\Users\la\.platformio\packages\framework-arduinoespressif32\tools\partitions\huge_app2.csv:
 //
 // # Name     Type  SubType     Offset   Size   Flags
-// nvs,       data,  nvs,       0x9000,   0x5000,    
-// otadata,   data,  ota,       0xe000 ,  0x2000,    
-// app0,      app,   ota_0,     0x10000,  0x3c0000,   
-// spiffs,    data,  spiffs,    0x3D0000, 0x30000, 
+// nvs,       data,  nvs,       0x9000,   0x5000,
+// otadata,   data,  ota,       0xe000 ,  0x2000,
+// app0,      app,   ota_0,     0x10000,  0x3c0000,
+// spiffs,    data,  spiffs,    0x3D0000, 0x30000,
 
 // Select camera model
 //#define CAMERA_MODEL_WROVER_KIT // Has PSRAM
@@ -40,7 +40,7 @@
 
 //
 #define MYNAME "ESPCAM04"
-#define MYVERSION "FW:202102271500"
+#define MYVERSION "FW:2021030611600"
 
 Preferences pref;
 BluetoothSerial SerialBT;
@@ -70,12 +70,6 @@ void setup()
   String ssid;
   String pass;
 
-  if (!SerialBT.begin(MYNAME))
-  {
-    Serial.println("Bluetooth connection failed.");
-  }
-  Serial.println("Bluetooth connect ok.");
-
   pref.begin(MYNAME, false);
 
   // Serial.print("freeEntries()_:");
@@ -85,13 +79,21 @@ void setup()
   // if not successful, ask for ssid and passwword via Bluetooth
   while (!wifiConnect(45000))
   {
+    if (!SerialBT.begin(MYNAME))
+      Serial.println("Starting bluetooth failed.");
+
+    while (!SerialBT.connected(5000))
+    {
+      Serial.print("Bluetooth waiting for connect. My name_:");
+      Serial.println(MYNAME);
+    }
 
     int client_wifi_ssid_id = 0;
     int n = wifiScanNetworks();
 
     if (n == 0)
     {
-      Serial.println("No networks found. Givig up.");
+      SerialBT.println("No networks found. Givig up.");
       return;
     }
 
@@ -124,24 +126,29 @@ void setup()
     Serial.println(pref.getString("ssid", "DEFAULT"));
     Serial.print("pass_:");
     Serial.println(pref.getString("pass", "DEFAULT"));
+
+    SerialBT.println("Bluetooth no longer needed. Disconnecting");
+    SerialBT.disconnect();
+    Serial.println("Closing bluetooth connection");
+    //
+    //    SerialBT.end(); will cause the ESP to hang
+    //    so restart will work as workaround
+    ESP.restart();
   }
 
   // at this point the network should be connected
-  Serial.printf("Connected to %s\n", WiFi.SSID().c_str());
+  Serial.print("Connected to_:");
+  Serial.println(WiFi.SSID());
+  Serial.print("IP_:");
+  Serial.println(WiFi.localIP());
 
   if (!MDNS.begin(MYNAME))
     Serial.println("Error setting up MDNS responder!");
-  //
-  // Bluetooth AND WiFi won't work well.
-  //
-  SerialBT.printf("Bluetooth no longer needed.\nClosing bluetooth connection. Good bye.\n");
-  SerialBT.disconnect();
-  SerialBT.end();
-  Serial.println("Bluetooth connection closed.");
 
   startCameraServer();
 
-  Serial.printf("Camera Ready! Use 'http://%s to connect.\n", WiFi.localIP().toString().c_str());
+  Serial.print("Camera Ready! Use 'http://");
+  Serial.println(WiFi.localIP());
   Serial.printf("\nRecording:\n\tffmpeg -re -f mjpeg -t 300 -i http://%s:81/stream   -an -c:v libx265 -crf 29 -preset fast <OUTPUTFILE>", MYNAME);
   Serial.printf("\nCapture frame:\n\tcurl http://%s/capture  --output <OUTPUTFILE>\n\n", MYNAME);
 }
@@ -150,23 +157,21 @@ void loop()
 {
   // put your main code here, to run repeatedly:
 
-
   int i = 0;
-  
+
   if (WiFi.status() != WL_CONNECTED)
   {
     wifiConnect(60000);
     i++;
     if (i > 5)
-        ESP.restart();
+      ESP.restart();
   }
   else
   {
-    i=0;
+    i = 0;
   }
 
   delay(10000);
-
 }
 
 bool wifiConnect(long timeout)

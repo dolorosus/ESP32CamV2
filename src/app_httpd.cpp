@@ -541,7 +541,8 @@ static esp_err_t cmd_handler(httpd_req_t *req){
             detection_enabled = val;
         }
     }
-    else if(!strcmp(variable, "RESTART")) {
+    else if(!strcmp(variable, "restart")) {
+        Serial.println("Restart request");
         ESP.restart();
     }
     else {
