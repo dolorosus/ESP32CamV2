@@ -19,6 +19,14 @@
 //            Partial images will be transmitted if image exceeds buffer size
 //
 
+// C:\Users\la\.platformio\packages\framework-arduinoespressif32\tools\partitions\huge_app2.csv:
+//
+// # Name     Type  SubType     Offset   Size   Flags
+// nvs,       data,  nvs,       0x9000,   0x5000,    
+// otadata,   data,  ota,       0xe000 ,  0x2000,    
+// app0,      app,   ota_0,     0x10000,  0x3c0000,   
+// spiffs,    data,  spiffs,    0x3D0000, 0x30000, 
+
 // Select camera model
 //#define CAMERA_MODEL_WROVER_KIT // Has PSRAM
 //#define CAMERA_MODEL_ESP_EYE // Has PSRAM
